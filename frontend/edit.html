@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseCraft - Edit Profile</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', -apple-system, sans-serif; background: #0a0e27; color: #fff; min-height: 100vh; }
+        .bg-anim { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0a0e27 100%); }
+        .bg-anim::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 20% 50%, rgba(138, 43, 226, 0.15) 0%, transparent 25%), radial-gradient(circle at 80% 80%, rgba(67, 97, 238, 0.15) 0%, transparent 25%); }
+        .navbar { position: sticky; top: 0; z-index: 1000; background: rgba(15, 20, 45, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 20px 0; }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { display: flex; align-items: center; gap: 12px; font-size: 26px; font-weight: 800; background: linear-gradient(135deg, #8a2be2, #4361ee); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-decoration: none; }
+        .logo-icon { width: 45px; height: 45px; background: linear-gradient(135deg, #8a2be2, #4361ee); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); }
+        .back-btn { color: rgba(255, 255, 255, 0.8); text-decoration: none; font-weight: 500; padding: 10px 20px; border-radius: 25px; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .back-btn:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+        .container { max-width: 900px; margin: 0 auto; padding: 60px 40px; position: relative; z-index: 1; }
+        .page-header { text-align: center; margin-bottom: 50px; }
+        .page-header h1 { font-size: 48px; font-weight: 900; margin-bottom: 15px; background: linear-gradient(135deg, #fff, #8a2be2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .page-header p { font-size: 18px; color: rgba(255, 255, 255, 0.6); }
+        .edit-card { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(20px); border-radius: 25px; border: 1px solid rgba(255, 255, 255, 0.1); padding: 50px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .profile-preview { text-align: center; margin-bottom: 40px; position: relative; }
+        .preview-wrapper { position: relative; display: inline-block; }
+        .profile-img-preview, .profile-img-placeholder { width: 150px; height: 150px; border-radius: 50%; margin: 0 auto 20px; border: 5px solid #8a2be2; box-shadow: 0 0 40px rgba(138, 43, 226, 0.6); object-fit: cover; }
+        .profile-img-placeholder { background: linear-gradient(135deg, #8a2be2, #4361ee); display: flex; align-items: center; justify-content: center; font-size: 64px; font-weight: bold; }
+        .img-upload-overlay { position: absolute; bottom: 25px; right: 0; background: linear-gradient(135deg, #8a2be2, #4361ee); width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 4px solid #0a0e27; transition: all 0.3s; box-shadow: 0 4px 15px rgba(138, 43, 226, 0.5); }
+        .img-upload-overlay:hover { transform: scale(1.1); box-shadow: 0 6px 25px rgba(138, 43, 226, 0.8); }
+        .img-upload-overlay svg { width: 24px; height: 24px; }
+        #profileImgInput { display: none; }
+        .form-section { margin-bottom: 35px; }
+        .form-section-title { font-size: 18px; font-weight: 700; color: #b794f6; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .form-section-title svg { width: 20px; height: 20px; }
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; margin-bottom: 10px; font-weight: 600; color: rgba(255, 255, 255, 0.8); font-size: 14px; }
+        .form-input, .form-textarea { width: 100%; padding: 16px 20px; background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.1); border-radius: 15px; color: #fff; font-size: 16px; transition: all 0.3s; font-family: inherit; }
+        .form-input:focus, .form-textarea:focus { outline: none; border-color: #8a2be2; background: rgba(255, 255, 255, 0.08); box-shadow: 0 0 20px rgba(138, 43, 226, 0.3); }
+        .form-textarea { min-height: 120px; resize: vertical; }
+        .char-count { text-align: right; font-size: 12px; color: rgba(255, 255, 255, 0.5); margin-top: 5px; }
+        .form-actions { display: flex; gap: 20px; margin-top: 40px; padding-top: 30px; border-top: 1px solid rgba(255, 255, 255, 0.1); }
+        .btn { padding: 16px 40px; border-radius: 30px; font-weight: 600; cursor: pointer; border: none; font-size: 16px; transition: all 0.3s; flex: 1; }
+        .btn-primary { background: linear-gradient(135deg, #8a2be2, #4361ee); color: white; box-shadow: 0 10px 30px rgba(138, 43, 226, 0.4); }
+        .btn-primary:hover:not(:disabled) { transform: translateY(-3px); box-shadow: 0 15px 40px rgba(138, 43, 226, 0.6); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05); color: white; border: 2px solid rgba(255, 255, 255, 0.2); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-2px); }
+        .alert { padding: 16px 20px; border-radius: 15px; margin-bottom: 25px; display: none; align-items: center; gap: 12px; animation: slideDown 0.4s; }
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .alert.show { display: flex; }
+        .alert-success { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.3); color: #10b981; }
+        .alert-error { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; }
+        .loading-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 3000; align-items: center; justify-content: center; }
+        .loading-overlay.show { display: flex; }
+        .spinner { width: 60px; height: 60px; border: 5px solid rgba(255, 255, 255, 0.1); border-top: 5px solid #8a2be2; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .file-name { margin-top: 10px; font-size: 14px; color: #b794f6; text-align: center; }
+        @media (max-width: 768px) { 
+            .container { padding: 40px 20px; }
+            .edit-card { padding: 30px 20px; }
+            .page-header h1 { font-size: 32px; }
+            .form-actions { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-anim"></div>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">
+                    <svg width="26" height="26" fill="none" stroke="white" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                </div>
+                <span>CourseCraft</span>
+            </a>
+            <a href="index.html" class="back-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Back to Home
+            </a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="page-header">
+            <h1>Edit Your Profile ✨</h1>
+            <p>Update your information and make your profile stand out</p>
+        </div>
+        <div class="edit-card">
+            <div id="alertContainer"></div>
+            <div class="profile-preview">
+                <div class="preview-wrapper">
+                    <div id="profileImgPreview"></div>
+                    <label for="profileImgInput" class="img-upload-overlay" title="Change profile picture">
+                        <svg fill="white" viewBox="0 0 24 24"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </label>
+                    <input type="file" id="profileImgInput" accept="image/*">
+                </div>
+                <div id="fileName" class="file-name"></div>
+            </div>
+            <form id="editProfileForm">
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        Personal Information
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email Address</label>
+                        <input type="email" id="email" class="form-input" placeholder="your.email@example.com" required>
+                    </div>
+                </div>
+                <div class="form-section">
+                    <div class="form-section-title">
+                        <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H6l-2 2V4h16v12z"/></svg>
+                        About You
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bio">Bio</label>
+                        <textarea id="bio" class="form-textarea" placeholder="Tell us about yourself..." maxlength="100"></textarea>
+                        <div class="char-count"><span id="bioCount">0</span>/100</div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="saveBtn">
+                        <span id="btnText">Save Changes</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+    <script>
+        const API = 'http://localhost:8000';
+        let selectedFile = null;
+        
+        function showAlert(message, type = 'success') {
+            const container = document.getElementById('alertContainer');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            const icon = type === 'success' ? '✓' : '✕';
+            container.innerHTML = `<div class="alert ${alertClass} show"><span style="font-size:20px">${icon}</span><span>${message}</span></div>`;
+            setTimeout(() => { container.innerHTML = ''; }, 5000);
+        }
+        
+        function showLoading(show) {
+            document.getElementById('loadingOverlay').classList.toggle('show', show);
+            document.getElementById('saveBtn').disabled = show;
+            document.getElementById('btnText').textContent = show ? 'Saving...' : 'Save Changes';
+        }
+        
+        function updateCharCount() {
+            const bio = document.getElementById('bio');
+            document.getElementById('bioCount').textContent = bio.value.length;
+        }
+        
+        async function loadProfile() {
+            const token = localStorage.getItem('access_token');
+            const username = localStorage.getItem('username');
+            if (!token) { window.location.href = 'login.html'; return; }
+            
+            try {
+                const response = await fetch(`${API}/profile/`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    const profile = data.result;
+                    document.getElementById('email').value = profile.email || '';
+                    document.getElementById('bio').value = profile.bio || '';
+                    updateCharCount();
+                    
+                    const initial = username ? username[0].toUpperCase() : 'U';
+                    if (profile.profile_img) {
+                        document.getElementById('profileImgPreview').innerHTML = 
+                            `<img src="${API}${profile.profile_img}" class="profile-img-preview">`;
+                    } else {
+                        document.getElementById('profileImgPreview').innerHTML = 
+                            `<div class="profile-img-placeholder">${initial}</div>`;
+                    }
+                } else if (response.status === 401) {
+                    await refreshToken();
+                    loadProfile();
+                } else {
+                    showAlert('Failed to load profile', 'error');
+                }
+            } catch (error) {
+                showAlert('Error loading profile', 'error');
+            }
+        }
+        
+        async function refreshToken() {
+            const rt = localStorage.getItem('refresh_token');
+            try {
+                const response = await fetch(`${API}/api/auth/refresh/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: rt })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('access_token', data.access);
+                    return true;
+                } else {
+                    localStorage.clear();
+                    window.location.href = 'login.html';
+                    return false;
+                }
+            } catch (error) {
+                localStorage.clear();
+                window.location.href = 'login.html';
+                return false;
+            }
+        }
+        
+        document.getElementById('profileImgInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('Image size must be less than 5MB', 'error');
+                    return;
+                }
+                selectedFile = file;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    document.getElementById('profileImgPreview').innerHTML = 
+                        `<img src="${event.target.result}" class="profile-img-preview">`;
+                    document.getElementById('fileName').textContent = file.name;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        document.getElementById('bio').addEventListener('input', updateCharCount);
+        
+        document.getElementById('editProfileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            showLoading(true);
+            
+            const token = localStorage.getItem('access_token');
+            const formData = new FormData();
+            formData.append('email', document.getElementById('email').value);
+            formData.append('bio', document.getElementById('bio').value);
+            if (selectedFile) {
+                formData.append('profile_img', selectedFile);
+            }
+            
+            try {
+                const response = await fetch(`${API}/profile/`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${token}` },
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    showAlert('Profile updated successfully! 🎉', 'success');
+                    setTimeout(() => { window.location.href = 'index.html'; }, 2000);
+                } else if (response.status === 401) {
+                    const refreshed = await refreshToken();
+                    if (refreshed) {
+                        document.getElementById('editProfileForm').dispatchEvent(new Event('submit'));
+                    }
+                } else {
+                    const error = await response.json();
+                    showAlert(error.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                showAlert('Network error. Please try again.', 'error');
+            } finally {
+                showLoading(false);
+            }
+        });
+        
+        loadProfile();
+    </script>
+</body>
+</html>

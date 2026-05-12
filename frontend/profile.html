@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile - HackHub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #00d9ff;
+            --secondary: #ff006e;
+            --accent: #8338ec;
+            --success: #2ecc71;
+            --dark-bg: #0a0e27;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-bg-light: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-tertiary: #808080;
+            --border-color: rgba(0, 217, 255, 0.2);
+            --error: #e74c3c;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0f0f2e 100%);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(0, 217, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(131, 56, 236, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+            animation: gradientShift 20s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(-40px, -40px); }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.2rem 2rem;
+            backdrop-filter: blur(15px);
+            background: rgba(10, 14, 39, 0.85);
+            border-bottom: 1px solid var(--border-color);
+            z-index: 1000;
+            animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: width 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auth-status {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .auth-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(46, 204, 113, 0.1); }
+        }
+
+        .logout-btn {
+            padding: 0.6rem 1.5rem;
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: var(--error);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: var(--error);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Main Content */
+        main {
+            position: relative;
+            z-index: 10;
+            padding-top: 100px;
+            padding-bottom: 60px;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 60vh;
+            gap: 1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Error State */
+        .error-state {
+            background: rgba(231, 76, 60, 0.1);
+            border: 2px solid var(--error);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .error-state h2 {
+            color: var(--error);
+            margin-bottom: 1rem;
+        }
+
+        .error-state p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Profile Header */
+        .profile-hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 5rem;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .profile-visual {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .avatar-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.2), rgba(131, 56, 236, 0.2));
+            border: 2px solid var(--border-color);
+            animation: borderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes borderGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(0, 217, 255, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(0, 217, 255, 0.6); }
+        }
+
+        .avatar-img {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 30px;
+            object-fit: cover;
+            z-index: 2;
+        }
+
+        .status-badge {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 3;
+            box-shadow: 0 8px 30px rgba(0, 217, 255, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .profile-info h1 {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.2;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s both;
+        }
+
+        .profile-title {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s both;
+        }
+
+        .profile-title span {
+            width: 3px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        .profile-bio {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.05rem;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.4s both;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 1rem;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both;
+        }
+
+        .stat-box {
+            background: var(--card-bg-light);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-box:hover {
+            background: rgba(0, 217, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.6s both;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            font-family: 'Syne', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: left 0.5s ease;
+            z-index: -1;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: var(--dark-bg);
+            box-shadow: 0 8px 30px rgba(0, 217, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 217, 255, 0.5);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.1);
+            transform: translateY(-4px);
+        }
+
+        /* Tabs Section */
+        .tabs-container {
+            margin-top: 4rem;
+            animation: fadeInUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.7s both;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-weight: 600;
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* User Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .info-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(0, 217, 255, 0.1) 0%, transparent 70%);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            background: rgba(0, 217, 255, 0.05);
+            border-color: var(--primary);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.15);
+        }
+
+        .info-card:hover::before {
+            top: -30%;
+            right: -30%;
+        }
+
+        .info-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+        }
+
+        .info-value {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            word-break: break-all;
+            font-family: 'Space Mono', monospace;
+            line-height: 1.6;
+        }
+
+        .copy-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.2);
+        }
+
+        /* Achievements Section */
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .achievement {
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 15px;
+            padding: 2rem 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .achievement:hover {
+            border-color: var(--primary);
+            background: rgba(0, 217, 255, 0.1);
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(0, 217, 255, 0.2);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .achievement-title {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border-color);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 5rem;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success);
+            color: white;
+            padding: 1.2rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(46, 204, 113, 0.3);
+            animation: slideUp 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 2000;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .profile-hero {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .avatar-container {
+                width: 200px;
+                height: 200px;
+            }
+
+            .profile-info h1 {
+                font-size: 2.5rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            .nav-links {
+                gap: 1rem;
+                font-size: 0.85rem;
+            }
+
+            main {
+                padding-top: 80px;
+            }
+
+            .container {
+                padding: 0 1rem;
+            }
+
+            .profile-hero {
+                margin-bottom: 3rem;
+            }
+
+            .avatar-container {
+                width: 180px;
+                height: 180px;
+            }
+
+            .profile-info h1 {
+                font-size: 2rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                overflow-x: auto;
+            }
+
+            .tab-btn {
+                padding: 0.8rem 1.5rem;
+                white-space: nowrap;
+            }
+
+            .achievements-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="header-content">
+            <div class="logo" onclick="goHome()">⚡ HackHub</div>
+            <nav class="nav-links">
+                <a href="index.html">← Back Home</a>
+                <div class="auth-status">
+                    <div class="auth-indicator"></div>
+                    <span id="authStatus">Authenticated</span>
+                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Loading State -->
+            <div id="loadingState" class="loading" style="display: none;">
+                <div class="spinner"></div>
+                <span>Loading your profile...</span>
+            </div>
+
+            <!-- Error State -->
+            <div id="errorState" class="error-state" style="display: none;">
+                <h2>⚠️ Failed to Load Profile</h2>
+                <p id="errorMessage"></p>
+                <button class="btn btn-primary" onclick="retryLoadProfile()">Try Again</button>
+            </div>
+
+            <!-- Profile Content -->
+            <div id="profileContent">
+                <!-- Profile Hero -->
+                <section class="profile-hero">
+                    <div class="profile-visual">
+                        <div class="avatar-container">
+                            <div class="avatar-bg"></div>
+                            <img id="profileImage" class="avatar-img" src="" alt="Profile" />
+                            <div class="status-badge">Active</div>
+                        </div>
+                    </div>
+
+                    <div class="profile-info">
+                        <h1 id="userName">Loading...</h1>
+                        <div class="profile-title">
+                            <span></span>
+                            <span id="userTitle">Developer</span>
+                        </div>
+                        <p class="profile-bio" id="userBio">Loading profile information...</p>
+
+                        <div class="profile-stats">
+                            <div class="stat-box">
+                                <div class="stat-value" id="projectCount">0</div>
+                                <div class="stat-label">Projects</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="achievementCount">0</div>
+                                <div class="stat-label">Achievements</div>
+                            </div>
+                            <div class="stat-box">
+                                <div class="stat-value" id="joinDate">-</div>
+                                <div class="stat-label">Member</div>
+                            </div>
+                        </div>
+
+                        <div class="profile-actions">
+                            <button class="btn btn-primary" onclick="goToEditProfile()">
+                                ✏️ Edit Profile
+                            </button>
+                            <button class="btn btn-secondary" onclick="shareProfile()">
+                                🔗 Share Profile
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Tabs Section -->
+                <section class="tabs-container">
+                    <div class="tabs">
+                        <button class="tab-btn active" onclick="switchTab(event, 'about')">About</button>
+                        <button class="tab-btn" onclick="switchTab(event, 'achievements')">Achievements</button>
+                        <button class="tab-btn" onclick="switchTab(event, 'projects')">Projects</button>
+                    </div>
+
+                    <!-- About Tab -->
+                    <div id="about" class="tab-content active">
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-label">📧 Email</div>
+                                <div class="info-value" id="userEmail">loading...</div>
+                                <button class="copy-btn" onclick="copyToClipboard(document.getElementById('userEmail').textContent)">📋 Copy</button>
+                            </div>
+
+                            <div class="info-card">
+                                <div class="info-label">🧬 User ID</div>
+                                <div class="info-value" id="userId" style="font-size: 0.95rem;">loading...</div>
+                                <button class="copy-btn" onclick="copyToClipboard(document.getElementById('userId').textContent)">📋 Copy</button>
+                            </div>
+
+                            <div class="info-card">
+                                <div class="info-label">🔐 JWT Token (First 50 chars)</div>
+                                <div class="info-value" id="jwtToken" style="font-size: 0.7rem; word-break: break-all;">loading...</div>
+                                <button class="copy-btn" onclick="copyFullToken()">📋 Copy Full</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Achievements Tab -->
+                    <div id="achievements" class="tab-content">
+                        <div class="achievements-grid" id="achievementsGrid">
+                            <div class="achievement">
+                                <div class="achievement-icon">🏆</div>
+                                <div class="achievement-title">Hackathon Winner</div>
+                            </div>
+                            <div class="achievement">
+                                <div class="achievement-icon">🌟</div>
+                                <div class="achievement-title">Rising Star</div>
+                            </div>
+                            <div class="achievement">
+                                <div class="achievement-icon">🚀</div>
+                                <div class="achievement-title">Innovator</div>
+                            </div>
+                            <div class="achievement">
+                                <div class="achievement-icon">💎</div>
+                                <div class="achievement-title">Elite Member</div>
+                            </div>
+                            <div class="achievement">
+                                <div class="achievement-icon">🎯</div>
+                                <div class="achievement-title">Goal Crusher</div>
+                            </div>
+                            <div class="achievement">
+                                <div class="achievement-icon">⚡</div>
+                                <div class="achievement-title">Speed Demon</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Projects Tab -->
+                    <div id="projects" class="tab-content">
+                        <div class="info-grid" id="projectsGrid">
+                            <div class="info-card">
+                                <div class="info-label">🚀 Project Name</div>
+                                <div class="info-value">My Awesome Project</div>
+                                <p style="color: var(--text-secondary); margin-top: 1rem; font-size: 0.9rem;">Built something amazing</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 HackHub. Premium Profile Experience | Secured with JWT</p>
+    </footer>
+
+    <script>
+        // Configuration
+        const API = 'http://127.0.0.1:8000';
+        const PROFILE_ENDPOINT = '/profile/myprofile/';
+        let currentToken = localStorage.getItem('access_token') || localStorage.getItem('jwt_token');
+        let fullToken = currentToken;
+
+        // Check Authentication
+        function checkAuth() {
+            const token = localStorage.getItem('access_token') || localStorage.getItem('jwt_token');
+            if (!token) {
+                redirectToLogin();
+                return false;
+            }
+            return true;
+        }
+
+        // Refresh Token (for access_token)
+        async function refreshToken() {
+            const rt = localStorage.getItem('refresh_token');
+            if (!rt) {
+                redirectToLogin();
+                return false;
+            }
+            
+            try {
+                const response = await fetch(`${API}/api/auth/refresh/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ refresh: rt })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('access_token', data.access);
+                    currentToken = data.access;
+                    return true;
+                } else {
+                    redirectToLogin();
+                    return false;
+                }
+            } catch (error) {
+                console.error('Token refresh failed:', error);
+                redirectToLogin();
+                return false;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            if (checkAuth()) {
+                loadProfile();
+            }
+        });
+
+        // Load Profile from API
+        async function loadProfile() {
+            const loadingState = document.getElementById('loadingState');
+            const profileContent = document.getElementById('profileContent');
+            const errorState = document.getElementById('errorState');
+
+            loadingState.style.display = 'flex';
+            profileContent.style.display = 'none';
+            errorState.style.display = 'none';
+
+            try {
+                const response = await fetch(API + PROFILE_ENDPOINT, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${currentToken}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.status === 401) {
+                    // Token expired, try to refresh
+                    const refreshed = await refreshToken();
+                    if (refreshed) {
+                        loadProfile();
+                    }
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.status && data.result) {
+                    populateProfile(data.result);
+                    loadingState.style.display = 'none';
+                    profileContent.style.display = 'block';
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (error) {
+                console.error('Profile load error:', error);
+                showError(error.message);
+            }
+        }
+
+        // Populate Profile with Data
+        function populateProfile(userData) {
+            const username = localStorage.getItem('username') || userData.user || 'User';
+            const role = localStorage.getItem('role') || 'HackHub Developer';
+            const initial = username.charAt(0).toUpperCase();
+            
+            // Basic Info
+            document.getElementById('userName').textContent = username;
+            document.getElementById('userEmail').textContent = userData.email || 'N/A';
+            document.getElementById('userId').textContent = userData.user_id || userData.user || 'N/A';
+            document.getElementById('userBio').textContent = userData.bio || 'Welcome to my profile! I\'m passionate about building innovative solutions.';
+            document.getElementById('userTitle').textContent = role;
+
+            // Profile Image
+            const profileImg = document.getElementById('profileImage');
+            if (userData.profile_img) {
+                const imageUrl = userData.profile_img.startsWith('http') 
+                    ? userData.profile_img 
+                    : API + userData.profile_img;
+                profileImg.src = imageUrl;
+            } else {
+                // Create gradient avatar with initial
+                profileImg.src = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200"%3E%3Cdefs%3E%3ClinearGradient id="grad" x1="0%25" y1="0%25" x2="100%25" y2="100%25"%3E%3Cstop offset="0%25" style="stop-color:%238338ec;stop-opacity:1" /%3E%3Cstop offset="100%25" style="stop-color:%2300d9ff;stop-opacity:1" /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect fill="url(%23grad)" width="200" height="200"/%3E%3Ctext x="50%25" y="50%25" font-size="100" fill="white" text-anchor="middle" dy=".3em" font-weight="bold"%3E${initial}%3C/text%3E%3C/svg%3E`;
+            }
+
+            // Stats
+            document.getElementById('projectCount').textContent = '3';
+            document.getElementById('achievementCount').textContent = '6';
+            document.getElementById('joinDate').textContent = 'Jan 2024';
+            
+            // Token Display (first 50 chars)
+            fullToken = currentToken;
+            const tokenDisplay = currentToken.substring(0, 50) + '...';
+            document.getElementById('jwtToken').textContent = tokenDisplay;
+        }
+
+        // Copy Full Token
+        function copyFullToken() {
+            copyToClipboard(fullToken);
+        }
+
+        // Show Error
+        function showError(message) {
+            const loadingState = document.getElementById('loadingState');
+            const errorState = document.getElementById('errorState');
+            const profileContent = document.getElementById('profileContent');
+
+            loadingState.style.display = 'none';
+            profileContent.style.display = 'none';
+            errorState.style.display = 'block';
+            document.getElementById('errorMessage').textContent = message || 'Failed to load profile. Please try again.';
+        }
+
+        // Tab Switching
+        function switchTab(event, tabName) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // Copy to Clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('✅ Copied to clipboard!');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+            });
+        }
+
+        // Show Toast
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideDown 0.5s ease-out forwards';
+                setTimeout(() => toast.remove(), 500);
+            }, 2000);
+        }
+
+        // Navigation
+        function goToEditProfile() {
+            window.location.href = 'edit_profile.html';
+        }
+
+        function goHome() {
+            window.location.href = 'index.html';
+        }
+
+        function shareProfile() {
+            const profileUrl = window.location.href;
+            copyToClipboard(profileUrl);
+            showToast('🔗 Profile link copied!');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear all auth tokens
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('refresh_token');
+                localStorage.removeItem('jwt_token');
+                localStorage.removeItem('username');
+                localStorage.removeItem('role');
+                
+                showToast('👋 Logged out successfully');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 500);
+            }
+        }
+
+        function redirectToLogin() {
+            // Show authentication required message
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(10, 14, 39, 0.95);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 99999;
+                backdrop-filter: blur(5px);
+            `;
+            
+            modal.innerHTML = `
+                <div style="
+                    background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(131, 56, 236, 0.1));
+                    border: 2px solid #00d9ff;
+                    border-radius: 20px;
+                    padding: 3rem;
+                    max-width: 500px;
+                    text-align: center;
+                    color: white;
+                    font-family: 'Poppins', sans-serif;
+                ">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔐</div>
+                    <h2 style="font-size: 2rem; margin-bottom: 1rem; color: #00d9ff;">Authentication Required</h2>
+                    <p style="color: #b0b0b0; margin-bottom: 1.5rem; font-size: 1.05rem;">You need to log in to access your profile.</p>
+                    <p style="color: #808080; margin-bottom: 2rem; font-size: 0.95rem;">Redirecting to login page in 3 seconds...</p>
+                    <div style="animation: spin 1s linear infinite; width: 40px; height: 40px; border: 3px solid #00d9ff; border-top-color: transparent; border-radius: 50%; margin: 0 auto;"></div>
+                </div>
+            `;
+            
+            // Add spin animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    to { transform: rotate(360deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(modal);
+            
+            // Redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 3000);
+        }
+
+        function retryLoadProfile() {
+            loadProfile();
+        }
+    </script>
+</body>
+</html>

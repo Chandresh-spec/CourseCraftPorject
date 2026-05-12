@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CourseCraft - Home</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: #050814; 
+            color: #fff; 
+            min-height: 100vh; 
+            overflow-x: hidden;
+        }
+        .bg-wrapper { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            z-index: 0;
+            background: linear-gradient(135deg, #050814 0%, #0a1128 50%, #050814 100%);
+        }
+        .bg-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 50%, rgba(99, 102, 241, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(168, 85, 247, 0.08) 0%, transparent 50%);
+            animation: bgRotate 20s linear infinite;
+        }
+        @keyframes bgRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .particles { position: absolute; width: 100%; height: 100%; overflow: hidden; }
+        .particle { 
+            position: absolute; 
+            width: 3px; 
+            height: 3px; 
+            background: rgba(99, 102, 241, 0.4); 
+            border-radius: 50%; 
+            animation: float 15s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(50px); opacity: 0; }
+        }
+        .navbar { 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            background: rgba(10, 17, 40, 0.7); 
+            backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1); 
+            padding: 18px 0;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        .nav-container { max-width: 1400px; margin: 0 auto; padding: 0 40px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            font-size: 26px; 
+            font-weight: 800; 
+            background: linear-gradient(135deg, #6366f1, #a855f7, #ec4899); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent;
+            cursor: pointer;
+        }
+        .logo-icon { 
+            width: 48px; 
+            height: 48px; 
+            background: linear-gradient(135deg, #6366f1, #a855f7); 
+            border-radius: 14px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
+        }
+        .nav-items { display: flex; align-items: center; gap: 35px; }
+        .nav-link { 
+            color: rgba(255, 255, 255, 0.75); 
+            text-decoration: none; 
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6366f1, #a855f7);
+            transition: width 0.3s;
+        }
+        .nav-link:hover { color: #fff; }
+        .nav-link:hover::after { width: 100%; }
+        .nav-link.chat-link {
+            background: rgba(99, 102, 241, 0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        .nav-link.chat-link:hover {
+            background: rgba(99, 102, 241, 0.25);
+        }
+        .chat-icon { font-size: 18px; }
+        .profile-trigger { 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            cursor: pointer; 
+            padding: 10px 18px; 
+            border-radius: 30px; 
+            background: rgba(99, 102, 241, 0.1); 
+            border: 1px solid rgba(99, 102, 241, 0.2); 
+            transition: all 0.3s; 
+        }
+        .profile-trigger:hover { 
+            background: rgba(99, 102, 241, 0.2); 
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+        }
+        .profile-avatar-placeholder { 
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #6366f1, #a855f7); 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 50%;
+        }
+        .logout-btn { 
+            background: linear-gradient(135deg, #ec4899, #8b5cf6); 
+            color: white; 
+            border: none; 
+            padding: 11px 26px; 
+            border-radius: 25px; 
+            cursor: pointer; 
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+        }
+        .logout-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(236, 72, 153, 0.5); }
+        .container { max-width: 1400px; margin: 0 auto; padding: 60px 40px; position: relative; z-index: 1; }
+        .hero { text-align: center; margin-bottom: 60px; padding: 60px 20px; position: relative; }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: -1;
+        }
+        .hero h1 { 
+            font-size: 72px; 
+            font-weight: 900; 
+            margin-bottom: 25px; 
+            background: linear-gradient(135deg, #fff 0%, #6366f1 50%, #a855f7 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            line-height: 1.1;
+            animation: fadeInUp 0.8s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .hero p { 
+            font-size: 22px; 
+            color: rgba(255, 255, 255, 0.65); 
+            max-width: 650px; 
+            margin: 0 auto 50px;
+            line-height: 1.6;
+            animation: fadeInUp 0.8s ease-out 0.2s backwards;
+        }
+        .search-container {
+            max-width: 800px;
+            margin: 0 auto 40px;
+            animation: fadeInUp 0.8s ease-out 0.4s backwards;
+        }
+        .search-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .search-input {
+            flex: 1;
+            padding: 16px 24px 16px 50px;
+            background: rgba(17, 24, 39, 0.6);
+            border: 2px solid rgba(99, 102, 241, 0.2);
+            border-radius: 30px;
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s;
+            outline: none;
+        }
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+        .search-input:focus {
+            border-color: rgba(99, 102, 241, 0.6);
+            background: rgba(17, 24, 39, 0.8);
+            box-shadow: 0 0 30px rgba(99, 102, 241, 0.3);
+        }
+        .search-icon {
+            position: absolute;
+            left: 18px;
+            color: rgba(99, 102, 241, 0.6);
+            pointer-events: none;
+        }
+        .search-btn {
+            padding: 16px 32px;
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            white-space: nowrap;
+        }
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.6);
+        }
+        .search-btn:active {
+            transform: translateY(0);
+        }
+        .filter-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; flex-wrap: wrap; gap: 20px; }
+        .section-title { font-size: 42px; font-weight: 800; background: linear-gradient(135deg, #fff, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .filter-controls { display: flex; gap: 15px; flex-wrap: wrap; }
+        .filter-btn {
+            padding: 10px 24px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+        .courses-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 35px; animation: fadeIn 0.6s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .course-card { 
+            background: rgba(17, 24, 39, 0.6); 
+            backdrop-filter: blur(20px); 
+            border-radius: 24px; 
+            overflow: hidden; 
+            border: 1px solid rgba(99, 102, 241, 0.15); 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(168, 85, 247, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+        .course-card:hover { transform: translateY(-12px); border-color: rgba(99, 102, 241, 0.4); box-shadow: 0 25px 60px rgba(99, 102, 241, 0.3); }
+        .course-card:hover::before { opacity: 1; }
+        .course-thumb { width: 100%; height: 220px; position: relative; overflow: hidden; }
+        .course-thumb img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+        .course-card:hover .course-thumb img { transform: scale(1.1); }
+        .course-thumb-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.3);
+        }
+        .course-content { padding: 28px; position: relative; }
+        .course-title { font-size: 22px; font-weight: 700; margin-bottom: 12px; color: #fff; line-height: 1.3; }
+        .course-desc { font-size: 14px; color: rgba(255, 255, 255, 0.55); margin-bottom: 20px; line-height: 1.6; }
+        .course-meta { display: flex; justify-content: space-between; align-items: center; padding-top: 20px; border-top: 1px solid rgba(99, 102, 241, 0.1); }
+        .author { display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(255, 255, 255, 0.7); }
+        .avatar { 
+            width: 36px; 
+            height: 36px; 
+            border-radius: 50%; 
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .price { font-size: 24px; font-weight: 700; color: #6366f1; margin-top: 15px; }
+        .loading, .empty { text-align: center; padding: 80px 20px; grid-column: 1 / -1; }
+        .spinner { width: 60px; height: 60px; border: 4px solid rgba(99, 102, 241, 0.1); border-top: 4px solid #6366f1; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 30px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .pagination { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 60px; }
+        .page-btn {
+            padding: 12px 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .page-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #6366f1, #a855f7);
+            color: white;
+            border-color: transparent;
+        }
+        .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+        .page-btn.active { background: linear-gradient(135deg, #6366f1, #a855f7); color: white; border-color: transparent; }
+        .clear-search-btn {
+            position: absolute;
+            right: 60px;
+            background: none;
+            border: none;
+            color: rgba(99, 102, 241, 0.6);
+            cursor: pointer;
+            font-size: 20px;
+            transition: all 0.3s;
+            padding: 8px;
+            display: none;
+        }
+        .clear-search-btn:hover {
+            color: rgba(99, 102, 241, 1);
+        }
+        .clear-search-btn.show {
+            display: block;
+        }
+        @media (max-width: 768px) { 
+            .hero h1 { font-size: 42px; }
+            .hero p { font-size: 18px; }
+            .courses-grid { grid-template-columns: 1fr; }
+            .nav-link, .profile-name { display: none; }
+            .nav-link.chat-link { display: flex; }
+            .filter-section { flex-direction: column; align-items: flex-start; }
+            .section-title { font-size: 32px; }
+            .search-wrapper {
+                flex-direction: column;
+            }
+            .search-input {
+                width: 100%;
+            }
+            .search-btn {
+                width: 100%;
+            }
+            .clear-search-btn {
+                right: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-wrapper">
+        <div class="particles" id="particles"></div>
+    </div>
+    
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <div class="logo-icon">
+                    <svg width="28" height="28" fill="none" stroke="white" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                    </svg>
+                </div>
+                <span>CourseCraft</span>
+            </div>
+            <div class="nav-items">
+                <a href="#" class="nav-link">Courses</a>
+                <a href="#" class="nav-link" onclick="goToMyLearning()">My Learning</a>
+                <a href="learning.html" class="nav-link">&#x1F9E0; Learning Hub</a>
+                <a href="#" class="nav-link chat-link" onclick="goToChat()" title="Chat with AI">
+                    <span class="chat-icon">💬</span>
+                    <span>Chat</span>
+                </a>
+                <div class="profile-trigger" id="profileTrigger" onclick="goToProfile()">
+                    <div id="navProfileImage"></div>
+                    <span class="profile-name" id="navProfileName">Loading...</span>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <div class="hero">
+            <h1>Learn Without Limits 🚀</h1>
+            <p>Explore thousands of courses and master new skills with expert instructors from around the world.</p>
+            
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <svg class="search-icon" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input 
+                        type="text" 
+                        id="searchInput" 
+                        class="search-input" 
+                        placeholder="Search courses by name, instructor, or price..."
+                        onkeypress="handleSearchKeypress(event)"
+                    >
+                    <button class="clear-search-btn" id="clearSearchBtn" onclick="clearSearch()" title="Clear search">✕</button>
+                    <button class="search-btn" onclick="performSearch()">Search</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filter-section" id="courses">
+            <h2 class="section-title">Featured Courses</h2>
+            <div class="filter-controls">
+                <button class="filter-btn active" data-level="all" onclick="filterByLevel(this)">All Levels</button>
+                <button class="filter-btn" data-level="beginner" onclick="filterByLevel(this)">Beginner</button>
+                <button class="filter-btn" data-level="intermediate" onclick="filterByLevel(this)">Intermediate</button>
+                <button class="filter-btn" data-level="advanced" onclick="filterByLevel(this)">Advanced</button>
+            </div>
+        </div>
+        
+        <div class="courses-grid" id="coursesGrid">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Loading amazing courses...</p>
+            </div>
+        </div>
+        
+        <div class="pagination" id="pagination" style="display: none;"></div>
+    </div>
+    
+    <script>
+        const API = "http://localhost:8000";
+        let currentPage = 1;
+        let currentSearchQuery = "";
+        let currentLevel = "all";
+
+        function handleSearchKeypress(e) {
+            if (e.key === "Enter") {
+                performSearch();
+            }
+        }
+
+        function toggleClearBtn() {
+            const searchInput = document.getElementById("searchInput");
+            const clearBtn = document.getElementById("clearSearchBtn");
+            if (searchInput.value.trim()) {
+                clearBtn.classList.add("show");
+            } else {
+                clearBtn.classList.remove("show");
+            }
+        }
+
+        function clearSearch() {
+            document.getElementById("searchInput").value = "";
+            currentSearchQuery = "";
+            toggleClearBtn();
+            currentPage = 1;
+            fetchCourses(1, "");
+        }
+
+        function performSearch() {
+            const query = document.getElementById("searchInput").value.trim();
+            currentSearchQuery = query;
+            currentPage = 1;
+            toggleClearBtn();
+            if (query) {
+                searchCourses(query, 1);
+            } else {
+                fetchCourses(1, "");
+            }
+        }
+
+        async function fetchCourses(page = 1, searchQuery = "") {
+            try {
+                let url = `${API}/course/home/?page=${page}`;
+                if (searchQuery) {
+                    url += `&search=${encodeURIComponent(searchQuery)}`;
+                }
+                const res = await fetch(url, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+                    }
+                });
+                const data = await res.json();
+                displayCourses(data.results || []);
+                renderPagination(data.count, page, searchQuery);
+            } catch (e) {
+                document.getElementById("coursesGrid").innerHTML =
+                    `<div class="empty">Failed to load courses</div>`;
+            }
+        }
+
+        async function searchCourses(query, page = 1) {
+            try {
+                const res = await fetch(`${API}/course/home/?search=${encodeURIComponent(query)}&page=${page}`, {
+                    headers: {
+                        "Authorization": `Bearer ${localStorage.getItem("access_token")}`
+                    }
+                });
+                const data = await res.json();
+                displayCourses(data.results || []);
+                renderPagination(data.count, page, query);
+            } catch (e) {
+                document.getElementById("coursesGrid").innerHTML =
+                    `<div class="empty">No courses found matching your search</div>`;
+            }
+        }
+
+        function displayCourses(courses) {
+            const grid = document.getElementById("coursesGrid");
+            if (!courses.length) {
+                grid.innerHTML = `<div class="empty">No courses found</div>`;
+                return;
+            }
+
+            grid.innerHTML = courses.map(c => {
+                const img = c.course_img
+                    ? `<img src="${c.course_img}" alt="${c.course_name}">`
+                    : `<div class="course-thumb-placeholder">📘</div>`;
+
+                const instructor = c.instructor_name || "Instructor";
+
+                return `
+                <div class="course-card" onclick="goToCourse(${c.id})">
+                    <div class="course-thumb">${img}</div>
+                    <div class="course-content">
+                        <div class="course-title">${c.course_name}</div>
+                        <div class="course-desc">${c.short_description || "No description available"}</div>
+                        <div class="course-meta">
+                            <div class="author">
+                                <div class="avatar">${instructor[0]}</div>
+                                <span>${instructor}</span>
+                            </div>
+                            <span>${c.level || "Beginner"}</span>
+                        </div>
+                        <div class="price">₹${c.price || 0}</div>
+                    </div>
+                </div>`;
+            }).join("");
+        }
+
+        function renderPagination(count, page, searchQuery = "") {
+            const perPage = 6;
+            const total = Math.ceil(count / perPage);
+            const p = document.getElementById("pagination");
+            p.style.display = total > 1 ? 'flex' : 'none';
+            p.innerHTML = "";
+
+            for (let i = 1; i <= total; i++) {
+                p.innerHTML += `
+                <button class="page-btn ${i === page ? "active" : ""}"
+                    onclick="currentPage=${i};fetchCourses(${i}, '${searchQuery}')">
+                    ${i}
+                </button>`;
+            }
+        }
+
+        function filterByLevel(btn) {
+            document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+            btn.classList.add("active");
+            currentLevel = btn.dataset.level;
+            // Filter logic can be added here
+        }
+
+        function checkAuth() {
+            const t = localStorage.getItem('access_token');
+            if (!t) {
+                window.location.href = '/login.html';
+                return false;
+            }
+            return true;
+        }
+
+        function displayNav() {
+            const u = localStorage.getItem('username');
+            if (u) {
+                document.getElementById('navProfileName').textContent = u;
+                document.getElementById('navProfileImage').innerHTML = 
+                    `<div class="profile-avatar-placeholder">${u[0].toUpperCase()}</div>`;
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'login.html';
+        }
+
+        function goToCourse(courseId) {
+            window.location.href = `detail.html?id=${courseId}`;
+        }
+
+        function goToMyLearning() {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                window.location.href = "login.html";
+            } else {
+                window.location.href = "Mylearning.html";
+            }
+        }
+
+        function goToProfile() {
+            window.location.href = "profile.html";
+        }
+
+        function goToChat() {
+            const token = localStorage.getItem("access_token");
+            if (!token) {
+                window.location.href = "login.html";
+            } else {
+                window.location.href = "chat.html";
+            }
+        }
+
+        document.getElementById('logoutBtn').onclick = logout;
+        document.getElementById('searchInput').addEventListener('input', toggleClearBtn);
+
+        if (checkAuth()) {
+            displayNav();
+            fetchCourses();
+        }
+    </script>
+</body>
+</html>

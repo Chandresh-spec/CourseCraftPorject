@@ -1,0 +1,7 @@
+Django==6.0.1
+djangorestframework
+djangorestframework-simplejwt
+django-cors-headers
+django-filter
+django-redis
+gunicorn

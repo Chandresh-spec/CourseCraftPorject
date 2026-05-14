@@ -16,3 +16,4 @@ output*.txt
 *.pot
 /dist
 /build
+.env

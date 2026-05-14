@@ -21,8 +21,12 @@ def quiz_by_topic(request):
             )
 
         completion = client.chat.completions.create(
-            model="zai-org/GLM-4.7-Flash:novita",
+            model="Qwen/Qwen2.5-72B-Instruct",
             messages=[
+                {
+                    "role": "system",
+                    "content": "You are a helpful study assistant. Provide clear, concise, and educational answers to the student's questions."
+                },
                 {
                     "role": "user",
                     "content": f"{topic}"

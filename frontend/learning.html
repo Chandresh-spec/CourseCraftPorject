@@ -96,10 +96,6 @@ textarea{min-height:130px;resize:vertical}
       <select id="up-course"></select>
       <label>Syllabus Content</label>
       <textarea id="up-content" placeholder="Paste the full syllabus — topics, modules, learning outcomes..."></textarea>
-      <label>Key Topics (comma-separated)</label>
-      <input id="up-topics" type="text" placeholder="Arrays, Sorting, Binary Trees, SQL Joins...">
-      <label>Upload PDF / TXT (optional)</label>
-      <input id="up-file" type="file" accept=".pdf,.txt">
       <br>
       <button class="btn btn-primary" id="up-btn" onclick="uploadSyllabus()">
         <div class="spin" id="up-spin"></div>
@@ -217,12 +213,9 @@ async function uploadSyllabus(){
     var fd=new FormData();
     fd.append("course",document.getElementById("up-course").value);
     fd.append("content",content);
-    fd.append("topics",document.getElementById("up-topics").value.trim());
-    var f=document.getElementById("up-file").files[0];
-    if(f) fd.append("syllabus_file",f);
     var r=await fetch(API+"/learning/syllabus/upload/",{method:"POST",headers:{"Authorization":"Bearer "+tok()},body:fd});
     var d=await r.json();
-    if(r.ok){ok.textContent="✅ "+d.message;ok.style.display="block";document.getElementById("up-content").value="";document.getElementById("up-topics").value="";}
+    if(r.ok){ok.textContent="✅ "+d.message;ok.style.display="block";document.getElementById("up-content").value="";}
     else{er.textContent="❌ "+(d.error||"Upload failed");er.style.display="block";}
   }catch(e){er.textContent="❌ "+e.message;er.style.display="block";}
   btn.disabled=false; sp.style.display="none"; bt.textContent="Upload Syllabus";
